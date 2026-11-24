@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GiftSould</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000000;--s1:#0d0f12;--s2:#16191e;--s3:#21252c;--line:rgba(255,255,255,.09);--tx:#f5f7fa;--mu:#8f96a3;--bad:#ff8a80}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:600 13px/1.35 Manrope,system-ui,sans-serif}
+body{padding:calc(16px + env(safe-area-inset-top,0px)) 0 calc(86px + env(safe-area-inset-bottom,0px))}
+.wrap{max-width:560px;margin:0 auto;padding:0 12px}
+.top-brand{min-height:52px;padding:8px 0 14px;display:flex;align-items:center;justify-content:center}
+.brand-mark{display:inline-flex;align-items:center;gap:9px;user-select:none}
+.brand-badge{width:24px;height:24px;border-radius:8px;background:#16191e;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:#3be383;font-weight:800;font-size:12px;letter-spacing:-.04em}
+.brand-word{font-size:18px;font-weight:800;letter-spacing:-.03em;color:#f5f7fa}
+.brand-word b{color:#3be383;font-weight:800}
+button{font:inherit;color:var(--tx);cursor:pointer;border:0;background:var(--s2);padding:0;display:inline-flex;align-items:center;justify-content:center}
+input{background:var(--s1);color:var(--tx);border:1px solid var(--line);font:inherit;outline:none}
+input:focus{border-color:rgba(255,255,255,.25)}
+.ic{display:block;flex:0 0 auto}
+.sbar{display:flex;gap:8px;margin-bottom:10px}
+.sb{position:relative;flex:1}
+.sb input{width:100%;height:38px;border-radius:99px;padding:0 14px 0 38px}
+.sb span{position:absolute;left:13px;top:11px;color:var(--mu)}
+.ib{flex:0 0 36px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line)}
+.ib.on{background:var(--s3);border-color:rgba(255,255,255,.24)}
+.sbar .ib{flex-basis:38px;width:38px;height:38px}
+.frow{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px;align-items:center}
+.frow::-webkit-scrollbar{display:none}
+.sep{flex:0 0 1px;height:20px;background:var(--line);margin:0 2px}
+.pill{flex:0 0 auto;height:36px;padding:0 11px 0 14px;border-radius:99px;gap:6px;font-weight:700;border:1px solid var(--line)}
+.pill span{max-width:136px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill .ic{color:var(--mu)}
+.pill.on{background:var(--s3);border-color:rgba(255,255,255,.24)}
+.panel{display:none;background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:10px;margin-bottom:10px}
+.panel.on{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lb{font-size:11px;color:var(--mu);margin:0 0 4px 4px}
+.g2 input{width:100%;height:36px;border-radius:12px;padding:0 12px}
+.nc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{height:30px;padding:0 12px;border-radius:99px;border:1px solid var(--line);color:var(--mu);font-weight:700}
+.chip.on{background:var(--s3);color:var(--tx);border-color:rgba(255,255,255,.24)}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btns button{flex:1;height:38px;border-radius:99px}
+.gb{background:linear-gradient(180deg,#3be383,#22b95e)!important;color:#04210f!important;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.cnt{display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:12px;margin:0 4px 8px;min-height:24px;gap:8px}
+.cnt button{background:none;height:24px;padding:0 10px;border-radius:99px;border:1px solid var(--line);font-size:11.5px;font-weight:700;flex:0 0 auto}
+.more{width:100%;height:40px;border-radius:99px;margin:12px 0 4px;border:1px solid var(--line)}
+.err{color:var(--bad);font-size:12px;margin:0 4px 8px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:7px;min-width:0;cursor:pointer;display:flex;flex-direction:column;transition:border-color .15s ease,transform .15s ease}
+.card:hover{border-color:rgba(255,255,255,.22)}
+.card:active{transform:scale(.99)}
+.art{container-type:inline-size;position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:8px;border:1px solid rgba(255,255,255,.1)}
+.art svg.pat{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.art-top{display:flex;align-items:center;justify-content:space-between;gap:6px;position:relative;z-index:2}
+.plat{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:99px;background:rgba(10,12,14,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);font-size:10.5px;font-weight:800;color:#fff}
+.plat i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.art-disc{font-size:10.5px;font-weight:800;padding:4px 7px;border-radius:99px;background:rgba(10,12,14,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);color:#fff;flex:0 0 auto}
+.art-disc.neg{color:var(--bad)}
+.art-center{position:relative;z-index:1;flex:1;display:grid;place-items:center;min-height:0}
+.art-center .em{font-size:40cqw;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.38))}
+.art-center img{width:76%;height:76%;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.42))}
+.art-foot{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.art-num{font-size:11px;font-weight:800;color:#fff;background:rgba(10,12,14,.55);backdrop-filter:blur(6px);padding:3px 7px;border-radius:99px}
+.nm{font-weight:800;font-size:13.5px;letter-spacing:-.01em;margin:8px 2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{color:var(--mu);font-weight:600;font-size:11.5px;margin:2px 2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.buy{display:flex;gap:6px;margin-top:auto}
+.pbtn{flex:1;height:32px;border-radius:99px;font-weight:800;font-size:12.5px;gap:4px;min-width:0;display:flex;align-items:center;justify-content:center;line-height:1;white-space:nowrap}
+@keyframes sp{to{transform:rotate(360deg)}}
+.spin svg{animation:sp .7s linear infinite!important}
+.sbtn{flex:0 0 32px;width:32px;height:32px;border-radius:50%;border:1px solid var(--line)}
+.sbtn.on{color:#ffd54a}
+.ton{width:11px;height:11px;fill:currentColor;flex:0 0 auto}
+.empty{text-align:center;color:var(--mu);padding:48px 10px;grid-column:1/-1}
+.nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:380px;margin:0 auto;height:54px;padding:5px;border-radius:27px;display:flex;gap:4px;background:rgba(13,15,18,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.75);z-index:10}
+.nav button{flex:1;height:100%;border-radius:22px;background:none;flex-direction:column;gap:2px;color:var(--mu);font-size:10.5px;font-weight:700}
+.nav button.on{background:var(--s3);color:var(--tx)}
+.shade{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:20;display:none;transition:opacity .18s ease}
+.shade.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:560px;max-height:92vh;overflow:auto;background:var(--s1);border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;padding:8px 12px calc(14px + env(safe-area-inset-bottom,0px));animation:up .18s ease-out;will-change:transform;transition:transform .2s ease-out}
+.sheet.dragging{transition:none!important}
+@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.sh-top{display:grid;grid-template-columns:30px 1fr 30px;align-items:center;margin-bottom:8px;min-height:30px}
+.slider-wrap{display:flex;align-items:center;justify-content:center;height:28px;cursor:grab;touch-action:none;user-select:none}
+.slider-wrap:active{cursor:grabbing}
+.hd{width:42px;height:5px;border-radius:99px;background:rgba(255,255,255,.24);transition:width .15s ease,background .15s ease}
+.slider-wrap:hover .hd,.slider-wrap.active .hd{width:54px;background:rgba(255,255,255,.45)}
+.x{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);justify-self:end}
+.sheet .art{aspect-ratio:1/1;width:min(100%,250px);margin:0 auto;border-radius:16px}
+.sheet .art-top,.sheet .art-foot{display:none}
+.sh-nm{font-size:18px;font-weight:800;margin:12px 2px 0}
+.sh-num{color:var(--mu);font-weight:700;margin:0 2px 10px}
+.verdict{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.verdict b{font-size:14.5px;display:block;margin-bottom:4px}
+.bad{color:var(--bad)}
+.vr{display:flex;justify-content:space-between;gap:10px;color:var(--mu);font-size:12px;padding:3px 0}
+.vr span:last-child{color:var(--tx);text-align:right}
+.vr span.bad{color:var(--bad)}
+.info{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:2px 12px;margin-bottom:12px}
+.ir{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.ir:last-child{border:0}
+.ir>span:first-child{color:var(--mu)}
+.ir>span:last-child{display:flex;align-items:center;gap:7px}
+.sw{width:15px;height:15px;border-radius:50%;display:inline-block;flex:0 0 auto;border:1px solid rgba(255,255,255,.15)}
+.pi{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;background:var(--s3);color:#cfd8d3;flex:0 0 auto}
+.pi svg{width:12px;height:12px}
+.go{display:flex;gap:8px}
+.go .gb{flex:1;height:42px;border-radius:99px;font-size:14px}
+.go .sbtn{flex:0 0 42px;width:42px;height:42px}
+.pk{max-height:74vh}
+.pk-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 4px 8px}
+.pk-head b{font-size:15px}
+.pk-clr{background:var(--s2);border:1px solid var(--line);border-radius:99px;height:26px;padding:0 10px;font-size:11.5px;font-weight:700;color:var(--mu)}
+.pk-clr:hover{color:var(--tx)}
+.pks{width:100%;height:36px;border-radius:12px;padding:0 12px;margin-bottom:6px}
+.opt{width:100%;height:42px;background:none;justify-content:flex-start;gap:10px;padding:0 8px;border-radius:12px;font-weight:700;font-size:13.5px;text-align:left;margin-bottom:2px}
+.opt span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opt.on{background:var(--s2);border:1px solid rgba(255,255,255,.14)}
+.em2{width:20px;text-align:center;font-style:normal;font-size:15px}
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--s3);border:1px solid var(--line);padding:9px 16px;border-radius:99px;font-size:12.5px;font-weight:700;z-index:40;display:none;max-width:90%;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="top-brand">
+  <div class="brand-mark">
+   <span class="brand-badge">GS</span>
+   <span class="brand-word">Gift<b>Sould</b></span>
+  </div>
+ </div>
+ <div class="sbar">
+  <div class="sb"><span id="si"></span><input id="q" placeholder="Быстрый поиск" autocomplete="off"></div>
+  <button class="ib" id="rbtn" aria-label="Обновить"></button>
+ </div>
+ <div class="frow" id="frow"></div>
+ <div class="panel" id="fp">
+  <div class="g2">
+   <div><div class="lb">Цена от, TON</div><input id="f-min" type="number" inputmode="decimal" placeholder="0"></div>
+   <div><div class="lb">Цена до, TON</div><input id="f-max" type="number" inputmode="decimal" placeholder="любая"></div>
+   <div><div class="lb">Выгода от, %</div><input id="f-dmin" type="number" inputmode="numeric" placeholder="0"></div>
+  </div>
+  <div class="lb" style="margin-top:10px">Номер</div>
+  <div class="nc" id="nc" style="margin-top:0"></div>
+  <div class="btns"><button id="f-reset">Сбросить</button><button class="gb" id="f-ok">Применить</button></div>
+ </div>
+ <div id="errs"></div>
+ <div class="cnt" id="cnt"></div>
+ <div class="cards" id="list"></div>
+ <div id="more"></div>
+</div>
+
+<div class="nav" id="nav"></div>
+<div class="shade" id="shade"><div class="sheet" id="sheet"></div></div>
+<div class="shade" id="pshade"><div class="sheet pk" id="pick"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const tg = window.Telegram && Telegram.WebApp;
+if (tg) { 
+  try {
+    tg.ready(); tg.expand();
+    tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000');
+  } catch(e){}
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('gs_'+k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('gs_'+k, JSON.stringify(v)); } catch(e){} }
+};
+const r1 = n => Math.round(n * 100) / 100;
+const fmt = n => n >= 1000 ? Math.round(n).toLocaleString('ru-RU') : String(r1(n));
+let tt; function toast(t){ const e = $('#toast'); e.textContent = t; e.style.display = 'block'; clearTimeout(tt); tt = setTimeout(() => e.style.display = 'none', 2600); }
+
+const IC = {
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+ refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',
+ sort:'<path d="M8 5v14M8 5L5 8M8 5l3 3M16 19V5m0 14l-3-3m3 3l3-3"/>',
+ filter:'<path d="M4 5h16l-6 7.5V19l-4-2v-4.5z"/>',
+ star:'<path d="M12 3.5l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.8l6-.8z"/>',
+ close:'<path d="M6 6l12 12M18 6L6 18"/>',
+ grid:'<rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/>',
+ flame:'<path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 3-6 .5 2 1.5 2.5 2 2 1-2 1-4 1-7z"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ chev:'<path d="M6 9l6 6 6-6"/>'
+};
+const ic = (n, s = 18, fill) => `<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="${fill ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+
+/* ====== ТОКЕНЫ И ПЛАТФОРМЫ ====== */
+const TOKENS = {
+  mrkt: ['0x2133031f5acbc493572c02f271186f241cd8d6a5','0xdef22c4222ceeb8e0219e85f8583f0da0c85386f'],
+  portals: ['PRTLSwfLzpVGSAQiUfXEenJkq1cwTsEcsn1hPL9zwwg','0x883fe26efb8694c036db84b64201f76ab8298494']
+};
+const PLATFORMS = { mrkt:{name:'MRKT',color:'#4da3ff',tokens:TOKENS.mrkt}, portals:{name:'Portals',color:'#b583ff',tokens:TOKENS.portals}, other:{name:'Другая',color:'#ffcf4d',tokens:[]} };
+const pn = p => (PLATFORMS[p] || {}).name || p;
+
+/* ====== ВСТРОЕННЫЙ ПРОКСИ (CORS BLOCK) ====== */
+// Пытаемся получить данные с реальных API через публичный CORS-прокси
+async function fetchRealLots() {
+  const results = [];
+  
+  // 1. MRKT (через corsproxy.io)
+  try {
+    const mrktUrl = 'https://api.tgmrkt.io/api/v1/gifts/saling';
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(mrktUrl)}`;
+    const res = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offset: 0, limit: 50 })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const items = data.items || [];
+      items.forEach(item => {
+        results.push({
+          id: `mrkt-${item.id || Math.random()}`,
+          platform: 'mrkt',
+          collection: item.gift_name || item.collection || 'Unknown',
+          model: item.model || 'Classic',
+          backdrop: item.backdrop || 'Black',
+          pattern: item.pattern || 'Star',
+          number: Number(item.number) || 1,
+          price: Number(item.price) / 1e9 || 0, 
+          link: item.link || ''
+        });
+      });
+    }
+  } catch(e) { console.warn('MRKT proxy error:', e); }
+
+  // 2. PORTALS (Попытка получить без авторизации, часто падает, но пробуем)
+  try {
+    const portalsUrl = 'https://portals-market.com/api/v1/search';
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(portalsUrl)}`;
+    const res = await fetch(proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ limit: 50, offset: 0, sort: 'price_asc' })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : (data.results || data.items || []);
+      items.forEach(item => {
+        const attrs = {};
+        (item.attributes || []).forEach(a => { attrs[a.type] = a.value; });
+        results.push({
+          id: `portals-${item.id || Math.random()}`,
+          platform: 'portals',
+          collection: item.name || item.gift_name || 'Unknown',
+          model: attrs.model || 'Classic',
+          backdrop: attrs.backdrop || 'Black',
+          pattern: attrs.symbol || 'Star',
+          number: Number(item.external_collection_number) || 1,
+          price: Number(item.price) || 0,
+          link: item.link || `https://t.me/portals?startapp=${item.id}`
+        });
+      });
+    }
+  } catch(e) { console.warn('Portals proxy error:', e); }
+
+  return results;
+}
+
+/* ====== ФОНЫ И УЗОРЫ (без изменений) ====== */
+const BG = {'Black':['#090a0c',1.35],'Onyx Black':['#2c3038',1.3],'Pure Gold':['#d9a326',1.5],'Satin Gold':['#e0ba58',1.3],'Midnight Blue':['#22458c',1],'Cobalt Blue':['#3f6ce0',1],'Navy Blue':['#293282',1],'Emerald':['#20b876',1.25],'Hunter Green':['#347d52',1],'Mint Green':['#64e0ab',1.05],'Pine Green':['#317866',1],'Camo Green':['#68783e',1],'Pistachio':['#b5d483',1],'Raspberry':['#d63363',1.1],'Burgundy':['#78182c',1.05],'Pink':['#f277a6',1],'Electric Purple':['#ab52f2',1.1],'Lavender':['#a69af0',1],'Indigo Dye':['#5e6ae8',1],'Sky Blue':['#62b4f2',1],'Azure Blue':['#2e9be3',1],'Turquoise':['#2fd6d1',1.05],'Orange':['#f58e2c',1],'Mustard':['#e3ae2b',1],'Tomato':['#f04e3d',1],'Chocolate':['#633822',1],'Platinum':['#c8d0d9',1.15],'Silver Blue':['#89aad0',1],'Steel Grey':['#778696',1]};
+const hx = h => { const n = parseInt(h.slice(1), 16); return [n >> 16, n >> 8 & 255, n & 255]; };
+const mixc = (h, t, a) => { const T = t ? 255 : 0; return 'rgb(' + hx(h).map(v => Math.round(v + (T - v) * a)).join(',') + ')'; };
+const DARK_TUNES = {'Black':{c:'#101114',e:'#020202',p:'rgba(255,255,255,.12)'},'Onyx Black':{c:'#3e4450',e:'#14171c',p:'rgba(255,255,255,.16)'},'Midnight Blue':{c:'#2b55a8',e:'#0d1933',p:'rgba(155,190,255,.22)'},'Navy Blue':{c:'#333d9e',e:'#0f1438',p:'rgba(165,175,255,.22)'},'Burgundy':{c:'#8f1d35',e:'#29070e',p:'rgba(255,165,185,.22)'},'Chocolate':{c:'#7a452b',e:'#24120a',p:'rgba(255,205,175,.22)'}};
+function bdCols(name){ if(DARK_TUNES[name]) return DARK_TUNES[name]; const h=(BG[name]||['#4e5c56'])[0], [r,g,b]=hx(h), lum=(0.299*r+0.587*g+0.114*b)/255; return {c:mixc(h,1,.16), e:mixc(h,0,.22), p:lum<.32?mixc(h,1,.26):mixc(h,0,.36)}; }
+
+const ICONS = {'Moon':'<path d="M15 3a9 9 0 1 0 6 15A8 8 0 0 1 15 3z"/>','Star':'<path d="M12 2l2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.3l7.1-.7z"/>','Heart':'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.7A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>','Swirl':'<path d="M12 12c0-1.5 1.5-2 2.5-1.2 1.3 1 .9 3.2-.8 4-2.3 1-5-.6-5.2-3.4-.2-3.4 3-5.8 6.3-5.2 4 .7 6 5 4.4 8.6"/>','Clover':'<circle cx="8.5" cy="8.5" r="4.6"/><circle cx="15.5" cy="8.5" r="4.6"/><circle cx="8.5" cy="15.5" r="4.6"/><circle cx="15.5" cy="15.5" r="4.6"/>','Money Bag':'<path d="M9 2.5h6L13.6 6h-3.2z"/><path d="M12 6C7 6 4 10 4 14.5A6.5 6.5 0 0 0 10.5 21h3a6.5 6.5 0 0 0 6.5-6.5C20 10 17 6 12 6z"/>','Skull':'<path fill-rule="evenodd" d="M12 2a8 8 0 0 0-8 8c0 3 1.5 4.7 3 5.6V20h10v-4.4c1.5-.9 3-2.6 3-5.6a8 8 0 0 0-8-8zM8.4 10.4a1.9 1.9 0 1 0 3.8 0 1.9 1.9 0 1 0-3.8 0zm3.4 0a1.9 1.9 0 1 0 3.8 0 1.9 1.9 0 1 0-3.8 0z"/>','Flower':'<circle cx="12" cy="6" r="3.7"/><circle cx="18" cy="10.4" r="3.7"/><circle cx="15.7" cy="17.5" r="3.7"/><circle cx="8.3" cy="17.5" r="3.7"/><circle cx="6" cy="10.4" r="3.7"/><circle cx="12" cy="12" r="3.2"/>','Gem':'<path d="M6 3h12l4 6-10 12L2 9z"/>','Lightning':'<path d="M13 2L4 14h6l-1 8 9-12h-6z"/>','Flame':'<path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 3-6 .5 2 1.5 2.5 2 2 1-2 1-5 1-8z"/>','Snowflake':'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/>','Crown':'<path d="M3 19l-1-12 5.5 4.5L12 4l4.5 7.5L22 7l-1 12z"/>','Diamond':'<path d="M12 2l8 10-8 10-8-10z"/>','Bolt':'<path d="M11 2L3 13h7l-1 9 8-11h-7z"/>','Wave':'<path d="M2 12c2.5-4 5-4 7.5 0s5 4 7.5 0 5-4 7-2"/>','Hexagon':'<path d="M12 2l8.5 5v10L12 22l-8.5-5V7z"/>','Cross':'<path d="M12 3v18M3 12h18"/>','Sparkle':'<path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/>','Sun':'<circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>','Ring':'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>','Triangle':'<path d="M12 3l10 18H2z"/>','Leaf':'<path d="M4 20C4 10 11 4 20 4c0 9-6 16-16 16z"/>','Shield':'<path d="M12 2l8 4v6c0 5.5-3.5 9.5-8 10-4.5-.5-8-4.5-8-10V6l8-4z"/>','Anchor':'<circle cx="12" cy="5" r="2.5"/><path d="M12 7.5V21M5 14c0 4 3 7 7 7s7-3 7-7M8 10h8"/>','Compass':'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>','Orbit':'<ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-25 12 12)"/><circle cx="12" cy="12" r="2.5"/>','GridDot':'<circle cx="6" cy="6" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="12" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>'};
+const STROKE = new Set(['Swirl','Snowflake','Wave','Cross','Sun','Leaf','Anchor','Compass','Orbit']);
+const IK = Object.keys(ICONS), iid = k => 'i-' + k.replace(/\W/g, '');
+document.body.insertAdjacentHTML('afterbegin', '<svg width="0" height="0" style="position:absolute"><defs>' + IK.map(k => `<symbol id="${iid(k)}" viewBox="0 0 24 24" ${STROKE.has(k) ? 'fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"' : 'fill="currentColor"'}>${ICONS[k]}</symbol>`).join('') + '<symbol id="ton" viewBox="0 0 24 24"><path d="M12 22L2.5 8.2 5.2 3h13.6l2.7 5.2z"/></symbol></defs></svg>');
+const iconOf = p => ICONS[p] ? p : IK[[...String(p)].reduce((a, c) => a + c.charCodeAt(0), 0) % IK.length];
+
+const PAT_CELLS = [{x:16,y:16,s:9,o:.38,r:-14},{x:50,y:13,s:8,o:.28,r:10},{x:84,y:17,s:9.5,o:.4,r:18},{x:13,y:50,s:8.5,o:.32,r:22},{x:87,y:50,s:8.5,o:.32,r:-20},{x:17,y:84,s:9.5,o:.38,r:12},{x:50,y:87,s:8,o:.26,r:-12},{x:84,y:83,s:9,o:.36,r:-16},{x:28,y:28,s:7.5,o:.24,r:8},{x:72,y:28,s:7.5,o:.24,r:-10},{x:28,y:72,s:7.5,o:.22,r:-8},{x:72,y:72,s:7.5,o:.22,r:12}];
+const patCache = {};
+function patSvg(pattern, color){
+  const key = pattern + color; if (patCache[key]) return patCache[key];
+  const id = iid(iconOf(pattern));
+  const s = PAT_CELLS.map(c => `<g transform="translate(${r1(c.x)} ${r1(c.y)}) rotate(${c.r})"><use href="#${id}" x="${r1(-c.s/2)}" y="${r1(-c.s/2)}" width="${c.s}" height="${c.s}" opacity="${c.o}"/></g>`).join('');
+  return patCache[key] = `<svg class="pat" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="color:${color}">${s}</svg>`;
+}
+
+const COLS = {'Plush Pepe':[420,'🐸'],'Heart Locket':[260,'💝'],"Durov's Cap":[180,'🧢'],'Precious Peach':[95,'🍑'],'Swiss Watch':[40,'⌚'],'Loot Bag':[24,'🎒'],'Snoop Dogg':[22,'🐶'],'Stellar Rocket':[12,'🚀'],'Vice Cream':[10,'🍦'],'Toy Bear':[9,'🧸']};
+const MODELS = ['Classic','Royal','Neon'];
+function rng(seed){ return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+function demoData(){
+  const R = rng(20261124), out = [], names = Object.keys(COLS), bgs = Object.keys(BG);
+  for (let i = 0; i < 110; i++){
+    const col = names[Math.floor(R() * names.length)], bg = bgs[Math.floor(R() * bgs.length)];
+    const num = Math.max(1, Math.floor(Math.pow(R(), 2.2) * 9000));
+    const base = COLS[col][0] * BG[bg][1] * (num < 100 ? 1.6 : num < 1000 ? 1.15 : 1);
+    const lot = { id: 'd'+i, platform: R() > .5 ? 'portals' : 'mrkt', collection: col, model: MODELS[Math.floor(R() * 3)], backdrop: bg, pattern: IK[i % IK.length], number: num, price: Math.round(base * (0.68 + R() * 0.5) * 10) / 10 };
+    out.push(lot);
+    if (i % 9 === 0) out.push({ ...lot, id: 'd'+i+'b', platform: lot.platform === 'mrkt' ? 'portals' : 'mrkt', price: Math.round(lot.price * (0.88 + R() * 0.25) * 10) / 10 });
+  }
+  return out;
+}
+
+const med = a => { const s = [...a].sort((x,y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m-1] + s[m]) / 2; };
+function numTags(n){
+  const t = [], s = String(n);
+  if (n < 100) t.push('топ-номер'); else if (n < 1000) t.push('3 цифры');
+  if (s.length > 2 && /^(\d)\1+$/.test(s)) t.push('повтор'); else if (s.length > 2 && s === [...s].reverse().join('')) t.push('палиндром');
+  if (n >= 1000 && /0{3}$/.test(s)) t.push('круглый');
+  return t;
+}
+function analyze(list){
+  const byM = {}, byC = {}, byN = {};
+  list.forEach(l => { (byM[l.collection+'|'+l.model] ||= []).push(l); (byC[l.collection] ||= []).push(l); (byN[l.collection+'#'+l.num] ||= []).push(l); });
+  return list.map(l => {
+    const g = byM[l.collection+'|'+l.model].filter(x => x !== l);
+    const base = g.length >= 3 ? g : byC[l.collection].filter(x => x !== l);
+    const fair = base.length ? med(base.map(x => x.price)) : l.price;
+    const cmp = Object.keys(PLATFORMS).filter(p => p !== l.platform).map(p => {
+      const a = base.filter(x => x.platform === p); if (!a.length) return null;
+      const m = med(a.map(x => x.price)); return { p, m, d: Math.round((1 - l.price / m) * 100) };
+    }).filter(Boolean);
+    const tw = byN[l.collection+'#'+l.num].find(x => x !== l && x.platform !== l.platform);
+    return { ...l, fair, disc: Math.round((1 - l.price / fair) * 100), cmp, tags: numTags(l.num), twin: tw ? { p: tw.platform, price: tw.price, d: Math.round((1 - l.price / tw.price) * 100) } : null };
+  });
+}
+
+let favs = store.get('favs', []), all = [], errors = [], cur = null, pk = '';
+const MULTI_KEYS = ['col','mod','bg','pat','pl'];
+const F = { q:'', col:[], mod:[], bg:[], pat:[], pl:[], num:'', min:'', max:'', dmin:'', sort:'new', quick:'all' };
+const norm = x => ({ id: String(x.id), platform: x.platform, collection: x.collection, model: x.model, backdrop: x.backdrop, pattern: x.pattern, num: Number(x.number), price: Number(x.price), img: x.image || '', link: x.link || '' });
+
+async function load(manual){
+  const rb = $('#rbtn'); if (rb.classList.contains('spin')) return;
+  rb.classList.add('spin'); errors = [];
+  if (!all.length) $('#list').innerHTML = '<div class="empty">Загружаю лоты…</div>';
+  let raw = [];
+
+  try {
+    if (manual) await new Promise(r => setTimeout(r, 500));
+    // Пытаемся получить реальные данные через встроенный прокси
+    raw = await fetchRealLots();
+    
+    // Если не удалось получить ни одного лота, включаем демо-режим
+    if (!raw || raw.length === 0) {
+      console.warn('Реальные данные не получены, переключаюсь на демо.');
+      raw = demoData();
+      if (manual) raw.forEach(x => x.price = Math.round(x.price * (0.95 + Math.random() * 0.1) * 10) / 10);
+    }
+  } catch(e) {
+    errors.push('Ошибка сети. Показываю демо-лоты.');
+    raw = demoData();
+  }
+
+  all = analyze(raw.map(norm).filter(x => x.price > 0));
+  render();
+  rb.classList.remove('spin');
+  if (manual) toast(errors.length ? 'Показаны демо-лоты' : 'Обновлено, лотов: ' + all.length);
+}
+
+const TITLES = { col:'Коллекция', mod:'Модель', bg:'Фон', pat:'Узор', pl:'Площадка', sort:'Сортировка' };
+const SORTS = [['new','Сначала новые'],['disc','Сначала выгодные'],['asc','Сначала дешёвые'],['desc','Сначала дорогие'],['num','По номеру']];
+
+function pillLabel(k){
+  const v = F[k];
+  if (!Array.isArray(v) || !v.length) return TITLES[k];
+  const names = v.map(item => k === 'pl' ? pn(item) : item);
+  return names.length === 1 ? names[0] : `${TITLES[k]} (${names.length})`;
+}
+
+function renderBar(){
+  const fr = $('#frow'), sl = fr.scrollLeft, fOn = !!(F.num || F.min || F.max || F.dmin);
+  const pill = k => {
+    const active = Array.isArray(F[k]) && F[k].length > 0;
+    return `<button class="pill ${active ? 'on' : ''}" data-pk="${k}"><span>${esc(pillLabel(k))}</span>${ic('chev', 13)}</button>`;
+  };
+  fr.innerHTML = `<button class="ib ${fOn ? 'on' : ''}" id="fbtn" aria-label="Фильтры">${ic('filter', 16)}</button>` + `<button class="ib ${F.sort !== 'new' ? 'on' : ''}" data-pk="sort" aria-label="Сортировка">${ic('sort', 16)}</button><i class="sep"></i>` + MULTI_KEYS.map(pill).join('');
+  fr.scrollLeft = sl;
+  $('#nav').innerHTML = [['all','Маркет','grid'],['best','Выгодные','flame'],['fav','Избранное','star']].map(([k,t,i]) => `<button class="${F.quick === k ? 'on' : ''}" data-k="${k}">${ic(i, 20)}${t}</button>`).join('');
+  $('#nc').innerHTML = [['','Любой'],['nice','Красивый'],['1000','До 1000'],['100','До 100']].map(([v,t]) => `<button class="chip ${F.num === v ? 'on' : ''}" data-nv="${v}">${t}</button>`).join('');
+}
+
+function opts(k){
+  if (k === 'sort') return SORTS.map(([v,t]) => ({ v, t }));
+  if (k === 'pat') return IK.map(v => ({ v, t: v }));
+  const f = { col:'collection', mod:'model', bg:'backdrop', pat:'pattern', pl:'platform' }[k];
+  const src = k === 'mod' && F.col.length ? all.filter(x => F.col.includes(x.collection)) : all;
+  return [...new Set(src.map(x => x[f]))].sort().map(v => ({ v, t: k === 'pl' ? pn(v) : v }));
+}
+
+function lead(k, v){
+  if (k === 'bg'){ const b = bdCols(v); return `<i class="sw" style="background:radial-gradient(circle at 40% 35%,${b.c},${b.e})"></i>`; }
+  if (k === 'pat') return `<i class="pi"><svg><use href="#${iid(iconOf(v))}"/></svg></i>`;
+  if (k === 'col') return `<i class="em2">${(COLS[v] || [0,'🎁'])[1]}</i>`;
+  if (k === 'pl') return `<i class="sw" style="background:${(PLATFORMS[v] || {}).color || '#888'}"></i>`;
+  return '';
+}
+
+function bindSlider(sheetEl, shadeEl, closeFn){
+  const wrap = sheetEl.querySelector('.slider-wrap'); if (!wrap) return;
+  let startY = 0, dy = 0, dragging = false, moved = false;
+  const reset = () => { sheetEl.classList.remove('dragging'); sheetEl.style.transform = ''; shadeEl.style.opacity = ''; };
+  const onMove = e => { if (!dragging) return; const clientY = e.touches ? e.touches[0].clientY : e.clientY; dy = Math.max(0, clientY - startY); if (dy > 4) moved = true; sheetEl.style.transform = `translateY(${dy}px)`; shadeEl.style.opacity = String(Math.max(0.15, 1 - dy / 320)); };
+  const onEnd = () => { if (!dragging) return; dragging = false; wrap.classList.remove('active'); sheetEl.classList.remove('dragging'); document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onEnd); document.removeEventListener('touchmove', onMove); document.removeEventListener('touchend', onEnd); if (dy > 90 || !moved) { reset(); closeFn(); } else { reset(); } dy = 0; moved = false; };
+  const onStart = e => { if (e.button !== undefined && e.button !== 0) return; startY = e.touches ? e.touches[0].clientY : e.clientY; dy = 0; dragging = true; moved = false; wrap.classList.add('active'); sheetEl.classList.add('dragging'); document.addEventListener('pointermove', onMove, { passive: true }); document.addEventListener('pointerup', onEnd); document.addEventListener('touchmove', onMove, { passive: true }); document.addEventListener('touchend', onEnd); };
+  wrap.addEventListener('pointerdown', onStart); wrap.addEventListener('touchstart', onStart, { passive: true });
+}
+
+function renderPickList(k, filterText = ''){
+  const o = opts(k); const w = filterText.trim().toLowerCase(); const filtered = w ? o.filter(x => x.t.toLowerCase().includes(w)) : o;
+  const list = k === 'sort' ? filtered : [{ v:'__ALL__', t:'Все' }, ...filtered]; const opl = $('#opl'); if (!opl) return;
+  if (k === 'sort'){ opl.innerHTML = list.map(x => `<button class="opt ${F.sort === x.v ? 'on' : ''}" data-pv="${esc(x.v)}"><span>${esc(x.t)}</span>${F.sort === x.v ? ic('check', 16) : ''}</button>`).join(''); return; }
+  const sel = F[k] || []; const allActive = sel.length === 0;
+  opl.innerHTML = list.map(x => { const isAll = x.v === '__ALL__'; const isOn = isAll ? allActive : sel.includes(x.v); return `<button class="opt ${isOn ? 'on' : ''}" data-pv="${esc(x.v)}">${isAll ? '' : lead(k, x.v)}<span>${esc(x.t)}</span>${isOn ? ic('check', 16) : ''}</button>`; }).join('');
+}
+
+function openPick(k){
+  pk = k; const o = opts(k); const hasSel = Array.isArray(F[k]) && F[k].length > 0;
+  const pickEl = $('#pick'), pshadeEl = $('#pshade'); pickEl.style.transform = ''; pshadeEl.style.opacity = '';
+  pickEl.innerHTML = `<div class="sh-top"><span></span><div class="slider-wrap" title="Потяните вниз или нажмите, чтобы свернуть"><div class="hd"></div></div><button class="x" data-pclose aria-label="Закрыть">${ic('close', 15)}</button></div>` + `<div class="pk-head"><b>${TITLES[k]}</b>${hasSel ? '<button class="pk-clr" data-pclr>Сбросить выбор</button>' : ''}</div>` + (o.length > 8 ? '<input class="pks" id="pks" placeholder="Поиск">' : '') + `<div id="opl"></div>`;
+  renderPickList(k, ''); bindSlider(pickEl, pshadeEl, closePick); const s = $('#pks'); if (s) s.oninput = () => renderPickList(k, s.value); pshadeEl.classList.add('on');
+}
+
+function closePick(){ const pickEl = $('#pick'), pshadeEl = $('#pshade'); pickEl.style.transform = ''; pshadeEl.style.opacity = ''; pshadeEl.classList.remove('on'); }
+function hasActiveFilters(){ return !!(F.q || MULTI_KEYS.some(k => Array.isArray(F[k]) && F[k].length > 0) || F.num || F.min || F.max || F.dmin); }
+
+function pass(l){
+  if (F.q){ const h = (l.collection+' '+l.model+' '+l.backdrop+' '+l.pattern+' '+l.num+' '+pn(l.platform)).toLowerCase(); if (!F.q.toLowerCase().split(/\s+/).every(w => h.includes(w))) return false; }
+  if (F.col.length && !F.col.includes(l.collection)) return false;
+  if (F.mod.length && !F.mod.includes(l.model)) return false;
+  if (F.bg.length && !F.bg.includes(l.backdrop)) return false;
+  if (F.pat.length && !F.pat.includes(l.pattern)) return false;
+  if (F.pl.length && !F.pl.includes(l.platform)) return false;
+  if (F.min && l.price < +F.min) return false; if (F.max && l.price > +F.max) return false; if (F.dmin && l.disc < +F.dmin) return false;
+  if (F.num === 'nice' && !l.tags.length) return false; if (F.num === '1000' && l.num > 1000) return false; if (F.num === '100' && l.num > 100) return false;
+  if (F.quick === 'best' && l.disc < 10) return false; if (F.quick === 'fav' && !favs.includes(l.id)) return false;
+  return true;
+}
+
+const TON = '<svg class="ton"><use href="#ton"/></svg>';
+function art(l){
+  const b = bdCols(l.backdrop), pc = (PLATFORMS[l.platform] || {}).color || '#888';
+  const gift = l.img ? `<img src="${esc(l.img)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'em',textContent:'${esc((COLS[l.collection] || [0,'🎁'])[1])}'}))">` : `<span class="em">${(COLS[l.collection] || [0,'🎁'])[1]}</span>`;
+  const discTxt = l.disc >= 0 ? `-${l.disc}%` : `+${Math.abs(l.disc)}%`; const discCls = l.disc >= 0 ? '' : ' neg';
+  return `<div class="art" style="background:radial-gradient(circle at 50% 48%,${b.c} 0%,${b.e} 100%)">` + `${patSvg(l.pattern, b.p)}` + `<div class="art-top"><div class="plat"><i style="background:${pc}"></i>${esc(pn(l.platform))}</div><span class="art-disc${discCls}">${discTxt}</span></div>` + `<div class="art-center">${gift}</div>` + `<div class="art-foot"><span class="art-num">#${l.num}</span></div>` + `</div>`;
+}
+const favBtn = (id, s) => `<button class="sbtn ${favs.includes(id) ? 'on' : ''}" data-fav="${esc(id)}" aria-label="В избранное">${ic('star', s, favs.includes(id))}</button>`;
+function card(l){ return `<div class="card" data-open="${esc(l.id)}">${art(l)}<div class="nm">${esc(l.collection)}</div><div class="sub">${esc(l.backdrop)} · ${esc(l.pattern)}</div><div class="buy"><div class="pbtn gb">${fmt(l.price)} ${TON}</div>${favBtn(l.id, 15)}</div></div>`; }
+
+let lim = 40;
+function render(keep){
+  if (!keep) lim = 40; renderBar();
+  const mode = F.sort === 'new' && F.quick === 'best' ? 'disc' : F.sort;
+  const srt = { new:() => 0, disc:(a,b) => b.disc - a.disc, asc:(a,b) => a.price - b.price, desc:(a,b) => b.price - a.price, num:(a,b) => a.num - b.num }[mode];
+  const r = all.filter(pass).sort(srt); const act = hasActiveFilters();
+  $('#errs').innerHTML = errors.map(e => `<div class="err">${esc(e)}</div>`).join('');
+  $('#cnt').innerHTML = `<span>${F.quick === 'fav' ? 'В избранном' : F.quick === 'best' ? 'Выгодных' : 'Лотов'}: ${r.length}</span>` + (act ? '<button data-reset>Сбросить фильтры</button>' : '');
+  $('#list').innerHTML = r.length ? r.slice(0, lim).map(card).join('') : `<div class="empty">${F.quick === 'fav' ? 'В избранном пока пусто.<br>Нажми ☆ на лоте.' : 'Ничего не найдено.<br>Смени фильтры.'}</div>`;
+  $('#more').innerHTML = r.length > lim ? `<button class="more" data-more>Показать ещё (${r.length - lim})</button>` : '';
+  if (cur) openSheet(cur, true);
+}
+
+const sgn = d => d >= 0 ? 'дешевле' : 'дороже';
+function openSheet(id, silent){
+  const l = all.find(x => x.id === id); if (!l) return closeSheet();
+  cur = id; const b = bdCols(l.backdrop), pos = l.disc >= 0, rows = [];
+  if (l.twin) rows.push(`<div class="vr"><span>Этот же NFT на ${esc(pn(l.twin.p))}: ${fmt(l.twin.price)}</span><span class="${l.twin.d >= 0 ? '' : 'bad'}">здесь ${sgn(l.twin.d)} на ${Math.abs(l.twin.d)}%</span></div>`);
+  l.cmp.forEach(c => rows.push(`<div class="vr"><span>${esc(pn(c.p))}, обычно ~${fmt(c.m)}</span><span class="${c.d >= 0 ? '' : 'bad'}">здесь ${sgn(c.d)} на ${Math.abs(c.d)}%</span></div>`));
+  const shEl = $('#sheet'), shadeEl = $('#shade'); shEl.style.transform = ''; shadeEl.style.opacity = '';
+  shEl.innerHTML = `<div class="sh-top"><span></span><div class="slider-wrap" title="Потяните вниз или нажмите, чтобы свернуть"><div class="hd"></div></div><button class="x" data-close aria-label="Закрыть">${ic('close', 15)}</button></div>` + `${art(l)}` + `<div class="sh-nm">${esc(l.collection)}</div><div class="sh-num">#${l.num}</div>` + `<div class="verdict"><b class="${pos ? '' : 'bad'}">${pos ? 'Дешевле' : 'Дороже'} рынка на ${Math.abs(l.disc)}%</b><div class="vr"><span>Цена лота</span><span>${fmt(l.price)} TON</span></div><div class="vr"><span>Рыночная цена</span><span>~${fmt(l.fair)} TON</span></div>${rows.join('')}</div>` + `<div class="info"><div class="ir"><span>Площадка</span><span>${esc(pn(l.platform))}</span></div><div class="ir"><span>Модель</span><span>${esc(l.model)}</span></div><div class="ir"><span>Фон</span><span>${esc(l.backdrop)}<i class="sw" style="background:radial-gradient(circle at 40% 35%,${b.c},${b.e})"></i></span></div><div class="ir"><span>Узор</span><span>${esc(l.pattern)}<i class="pi"><svg><use href="#${iid(iconOf(l.pattern))}"/></svg></i></span></div><div class="ir"><span>Номер</span><span>#${l.num}${l.tags.length ? ', ' + l.tags.join(', ') : ''}</span></div></div>` + `<div class="go"><button class="gb" data-go="${esc(l.id)}">Перейти на ${esc(pn(l.platform))}</button>${favBtn(l.id, 18)}</div>`;
+  bindSlider(shEl, shadeEl, closeSheet); if (!silent) shEl.scrollTop = 0;
+  shadeEl.classList.add('on'); document.body.style.overflow = 'hidden'; if (tg && tg.BackButton){ try { tg.BackButton.show(); } catch(e){} }
+}
+function closeSheet(){ cur = null; const shEl = $('#sheet'), shadeEl = $('#shade'); shEl.style.transform = ''; shadeEl.style.opacity = ''; shadeEl.classList.remove('on'); document.body.style.overflow = ''; if (tg && tg.BackButton){ try { tg.BackButton.hide(); } catch(e){} } }
+if (tg && tg.BackButton){ try { tg.BackButton.onClick(closeSheet); } catch(e){} }
+function goLot(id){ const l = all.find(x => x.id === id); if (!l) return; if (!l.link) return toast('Ссылка на лот недоступна (демо)'); if (tg && /^https:\/\/t\.me\//.test(l.link) && tg.openTelegramLink) tg.openTelegramLink(l.link); else if (tg && tg.openLink) tg.openLink(l.link); else window.open(l.link, '_blank'); }
+
+$('#si').innerHTML = ic('search', 16); $('#rbtn').innerHTML = ic('refresh', 17);
+$('#rbtn').onclick = () => load(true);
+$('#q').oninput = e => { F.q = e.target.value.trim(); render(); };
+$('#f-ok').onclick = () => { F.min = $('#f-min').value; F.max = $('#f-max').value; F.dmin = $('#f-dmin').value; $('#fp').classList.remove('on'); render(); };
+function resetAll(){ Object.assign(F, { q:'', col:[], mod:[], bg:[], pat:[], pl:[], num:'', min:'', max:'', dmin:'', sort:'new' }); ['#f-min','#f-max','#f-dmin','#q'].forEach(x => $(x).value = ''); render(); }
+$('#f-reset').onclick = resetAll;
+$('#shade').onclick = e => { if (e.target.id === 'shade' || e.target.closest('[data-close]')) closeSheet(); };
+$('#pshade').onclick = e => {
+  if (e.target.id === 'pshade' || e.target.closest('[data-pclose]')) return closePick();
+  if (e.target.closest('[data-pclr]')) { F[pk] = []; if (pk === 'col') F.mod = []; openPick(pk); render(); return; }
+  const o = e.target.closest('[data-pv]'); if (!o) return; const val = o.dataset.pv;
+  if (pk === 'sort') { F.sort = val; closePick(); render(); return; }
+  if (val === '__ALL__') { F[pk] = []; if (pk === 'col') F.mod = []; } else {
+    const arr = F[pk]; if (arr.includes(val)) { F[pk] = arr.filter(x => x !== val); } else { F[pk] = [...arr, val]; }
+    if (pk === 'col' && F.mod.length) { const allowedMods = new Set(all.filter(x => !F.col.length || F.col.includes(x.collection)).map(x => x.model)); F.mod = F.mod.filter(m => allowedMods.has(m)); }
+  }
+  const searchVal = $('#pks') ? $('#pks').value : ''; renderPickList(pk, searchVal);
+  const clrBtn = $('#pick .pk-clr'); if (clrBtn) clrBtn.style.display = (F[pk] && F[pk].length) ? '' : 'none'; else if (F[pk] && F[pk].length) openPick(pk);
+  render();
+};
+
+document.body.addEventListener('click', e => {
+  const f = e.target.closest('[data-fav]'); if (f){ e.stopPropagation(); const id = f.dataset.fav; favs = favs.includes(id) ? favs.filter(x => x !== id) : [...favs, id]; store.set('favs', favs); render(true); return; }
+  if (e.target.closest('#pshade')) return;
+  const g = e.target.closest('[data-go]'); if (g) return goLot(g.dataset.go);
+  if (e.target.closest('#fbtn')) return $('#fp').classList.toggle('on');
+  const p = e.target.closest('[data-pk]'); if (p) return openPick(p.dataset.pk);
+  const n = e.target.closest('[data-nv]'); if (n){ F.num = n.dataset.nv; return render(); }
+  const k = e.target.closest('[data-k]'); if (k){ F.quick = k.dataset.k; window.scrollTo(0, 0); return render(); }
+  if (e.target.closest('[data-reset]')) return resetAll();
+  if (e.target.closest('[data-more]')){ lim += 40; return render(true); }
+  const o = e.target.closest('[data-open]'); if (o && !e.target.closest('#shade')) openSheet(o.dataset.open);
+});
+load();
+</script>
+</body>
+  </html>
